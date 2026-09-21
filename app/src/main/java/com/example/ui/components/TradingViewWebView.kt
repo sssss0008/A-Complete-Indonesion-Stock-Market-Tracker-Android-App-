@@ -2,10 +2,13 @@ package com.example.ui.components
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.os.Build
 import android.view.ViewGroup
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -29,13 +32,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -52,6 +55,7 @@ fun TradingViewWebView(
     var hasError by remember { mutableStateOf(false) }
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
     var lastHtmlLoaded by remember { mutableStateOf("") }
+    val bgColor = MaterialTheme.colorScheme.background.toArgb()
 
     Box(
         modifier = modifier
@@ -66,12 +70,13 @@ fun TradingViewWebView(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
+                    setBackgroundColor(bgColor)
+
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
                         loadWithOverviewMode = true
                         useWideViewPort = true
-                        databaseEnabled = true
                         allowContentAccess = true
                         allowFileAccess = false
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -80,7 +85,6 @@ fun TradingViewWebView(
                         builtInZoomControls = true
                         displayZoomControls = false
                     }
-                    setBackgroundColor(0) // Transparent so background matches theme
 
                     webViewClient = object : WebViewClient() {
                         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -102,6 +106,26 @@ fun TradingViewWebView(
                                 isLoading = false
                             }
                         }
+
+                        override fun onReceivedHttpError(
+                            view: WebView?,
+                            request: WebResourceRequest?,
+                            errorResponse: WebResourceResponse?
+                        ) {
+                            if (request?.isForMainFrame == true && (errorResponse?.statusCode ?: 200) >= 400) {
+                                hasError = true
+                                isLoading = false
+                            }
+                        }
+
+                        override fun onRenderProcessGone(
+                            view: WebView?,
+                            detail: RenderProcessGoneDetail?
+                        ): Boolean {
+                            hasError = true
+                            isLoading = false
+                            return true
+                        }
                     }
 
                     webChromeClient = WebChromeClient()
@@ -109,6 +133,7 @@ fun TradingViewWebView(
                 }
             },
             update = { webView ->
+                webView.setBackgroundColor(bgColor)
                 if (lastHtmlLoaded != htmlContent) {
                     lastHtmlLoaded = htmlContent
                     isLoading = true
@@ -120,6 +145,19 @@ fun TradingViewWebView(
                         "UTF-8",
                         null
                     )
+                }
+            },
+            onRelease = { webView ->
+                try {
+                    webView.stopLoading()
+                    webView.loadUrl("about:blank")
+                    webView.clearHistory()
+                    webView.webChromeClient = null
+                    webView.webViewClient = object : WebViewClient() {}
+                    webView.destroy()
+                } catch (_: Throwable) {}
+                if (webViewRef == webView) {
+                    webViewRef = null
                 }
             }
         )
@@ -203,12 +241,6 @@ fun TradingViewWebView(
                     }
                 }
             }
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            webViewRef?.destroy()
         }
     }
 }

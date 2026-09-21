@@ -74,12 +74,14 @@ import com.example.ui.screens.MacroScreen
 import com.example.ui.screens.ScreenerScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.widgets.TradingViewHtmlBuilder
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        cleanupCorruptedWebViewCache()
         enableEdgeToEdge()
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -90,6 +92,20 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize()
                 )
             }
+        }
+    }
+
+    private fun cleanupCorruptedWebViewCache() {
+        try {
+            val webViewCache = File(cacheDir, "WebView")
+            if (webViewCache.exists()) {
+                val codeCache = File(webViewCache, "Default/HTTP Cache/Code Cache")
+                if (codeCache.exists()) {
+                    codeCache.deleteRecursively()
+                }
+            }
+        } catch (_: Throwable) {
+            // Silently ignore cache cleanup errors
         }
     }
 }
