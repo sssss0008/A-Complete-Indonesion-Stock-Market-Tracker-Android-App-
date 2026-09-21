@@ -1,0 +1,6 @@
+{
+  "name": "Indonesia Market Tracker",
+  "description": "Real-time Indonesian stock market tracker (IDX / IHSG) with live interactive TradingView charts, ticker tape, sector heatmap, stock screener, economic calendar, technical analysis, and company financials.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

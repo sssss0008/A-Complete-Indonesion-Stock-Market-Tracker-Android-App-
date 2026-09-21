@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Brazilian Diamond Accent in gold -->
+    <path
+        android:fillColor="#FFDF00"
+        android:pathData="M54,26 L78,54 L54,82 L30,54 Z" />
+
+    <!-- Center globe circle in deep blue -->
+    <path
+        android:fillColor="#002776"
+        android:pathData="M54,54m-18,0a18,18 0,1,1 36,0a18,18 0,1,1 -36,0" />
+
+    <!-- Candlestick 1 (Green Up) -->
+    <!-- Wick -->
+    <path
+        android:strokeColor="#00E676"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M43,45 L43,63" />
+    <!-- Candle body -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M41,49 H45 V59 H41 Z" />
+
+    <!-- Candlestick 2 (Central Bullish Tall) -->
+    <!-- Wick -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M54,39 L54,67" />
+    <!-- Candle body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,43 H56 V61 H52 Z" />
+
+    <!-- Candlestick 3 (Breakout Peak) -->
+    <!-- Wick -->
+    <path
+        android:strokeColor="#00E676"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M65,36 L65,58" />
+    <!-- Candle body -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M63,40 H67 V53 H63 Z" />
+
+    <!-- Trend Arrow Line going up -->
+    <path
+        android:strokeColor="#FFDF00"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M37,64 L48,53 L58,56 L71,40" />
+
+    <!-- Arrowhead -->
+    <path
+        android:fillColor="#FFDF00"
+        android:pathData="M71,40 L65,40 L71,46 Z" />
+</vector>
